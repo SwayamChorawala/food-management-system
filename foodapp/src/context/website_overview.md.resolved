@@ -1,0 +1,213 @@
+# 🍽️ The Chef & Table — Website Complete Overview
+
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph Frontend ["Frontend (React + Vite)"]
+        direction TB
+        A["🏠 Home Page"] --> N["Navbar"]
+        B["📋 Menu Page"] --> N
+        C["ℹ️ About Page"] --> N
+        D["📞 Contact Page"] --> N
+        E["🔑 Login/Register"] --> N
+        F["🛒 Cart Page"] --> N
+        G["📝 Order Form / Checkout"] --> N
+        H["🔐 Admin Panel"]
+    end
+
+    subgraph Backend ["Backend (Express.js)"]
+        direction TB
+        API1["POST /api/auth/register"]
+        API2["POST /api/auth/login"]
+        API3["POST /api/admin/login"]
+        API4["CRUD /api/orders"]
+        API5["CRUD /api/food"]
+        API6["GET/DELETE /api/users"]
+    end
+
+    subgraph Database ["Database (MongoDB)"]
+        DB1["Users Collection"]
+        DB2["Orders Collection"]
+        DB3["FoodItems Collection"]
+    end
+
+    Frontend -->|API Calls| Backend
+    Backend -->|Mongoose| Database
+```
+
+---
+
+## 📄 All Pages & Routes
+
+| # | Route | Page | Description |
+|---|-------|------|-------------|
+| 1 | `/#/` | **Home** | Landing page with hero section, explore menu, table booking, testimonials, contact form, footer |
+| 2 | `/#/menu` | **Menu** | Full menu with category/subcategory filters, search, and "Add to Cart" |
+| 3 | `/#/about` | **About** | About the restaurant + Team section |
+| 4 | `/#/contact` | **Contact** | Contact form for customer queries |
+| 5 | `/#/login` | **Login/Register** | User authentication (login + registration) |
+| 6 | `/#/card2` | **Cart** | Shopping cart with items added from menu |
+| 7 | `/#/orderform` | **Checkout** | Order form with delivery details, payment, order summary |
+| 8 | `/#/admin` | **Admin Panel** | Full admin dashboard (login required) |
+| 9 | `/#/explore` | **Explore** | Explore food categories |
+
+---
+
+## 🎯 Feature Breakdown
+
+### 🏠 Home Page (`/`)
+- Animated hero section with parallax mouse effect
+- "Explore Menu" CTA button
+- Sections: Explore → Booking → Hero2 → Side → Contact Form → Footer
+- Scroll progress bar at top
+- Responsive navbar with mobile drawer
+
+### 📋 Menu Page (`/menu`)
+- **18 food items** with images, descriptions, prices
+- **8 Categories**: Starters, Pizza, Pasta, Burgers, Main Course, Indian, Desserts, Beverages
+- **Sub-categories**: e.g., Starters → Bread, Chinese, Chicken
+- Search bar to filter items by name
+- Category filter buttons → Subcategory appears when a category is selected
+- "Add to Cart" on each card
+- Veg/Non-Veg badge on each item
+
+### 🛒 Cart Page (`/card2`)
+- Shows all items added to cart (Redux store)
+- Quantity display
+- Remove item functionality
+- Proceed to checkout
+
+### 📝 Checkout / Order Form (`/orderform`)
+- **Login required** — redirects to login if not authenticated
+- Form fields: Full Name, Phone, Address, Order Notes
+- Payment: Cash on Delivery (COD)
+- Order summary with subtotal, delivery fee (₹20), taxes (5%), total
+- On success: shows Order ID + items ordered
+- Orders saved to MongoDB via backend API
+
+### 🔑 Login / Register (`/login`)
+- **Login** with username & password
+- **Register** new account
+- User session stored in `localStorage`
+- Auth state synced via custom `authChange` event
+
+### 🔐 Admin Panel (`/admin`)
+- **Admin Login**: Default credentials `admin / admin123`
+- **4 Tabs** in vertical left sidebar:
+
+| Tab | Features |
+|-----|----------|
+| **Dashboard** | Stats cards (Total Orders, Revenue, Menu Items, Users) + Monthly Orders Bar Chart (Recharts) |
+| **Manage Menu** | View all food items, search, edit, delete, add new items. Base items from [item.js](file:///c:/foodapp-main/foodapp-main/foodapp/src/components/Menu/item.js) can be edited/reset |
+| **Customer Orders** | View all orders, update status (Pending → Preparing → Out for Delivery → Delivered → Cancelled), delete orders |
+| **Registered Users** | View all registered users, delete users |
+
+- Sidebar bottom: "Go to Website" and "Logout Admin" buttons
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 19, Vite 8, React Router DOM 7 |
+| **State Management** | Redux Toolkit |
+| **Animations** | Framer Motion, GSAP |
+| **Charts** | Recharts |
+| **Icons** | React Icons (Lu, Fa) |
+| **Styling** | Vanilla CSS (Dark Premium Theme) |
+| **Backend** | Express.js, Node.js |
+| **Database** | MongoDB (Mongoose ODM) |
+| **Dev Tools** | Concurrently (run frontend + backend together) |
+
+---
+
+## 🔌 Backend API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/admin/login` | Admin authentication |
+| `GET` | `/api/food` | Get all food items |
+| `POST` | `/api/food` | Create food item |
+| `PUT` | `/api/food/:id` | Update food item |
+| `DELETE` | `/api/food/:id` | Delete food item |
+| `GET` | `/api/orders` | Get all orders |
+| `POST` | `/api/orders` | Create new order |
+| `PUT` | `/api/orders/:id` | Update order status |
+| `DELETE` | `/api/orders/:id` | Delete order |
+| `POST` | `/api/auth/register` | Register new user |
+| `POST` | `/api/auth/login` | User login |
+| `GET` | `/api/users` | Get all users |
+| `DELETE` | `/api/users/:id` | Delete user |
+
+---
+
+## 📂 Project Structure
+
+```
+foodapp-main/
+├── package.json              ← Root workspace (concurrently)
+├── backend/
+│   ├── server.js             ← Express server + all APIs
+│   ├── models/
+│   │   ├── Order.js          ← Order schema
+│   │   ├── User.js           ← User schema
+│   │   └── FoodItem.js       ← Food item schema
+│   └── .env                  ← MONGO_URI config
+├── foodapp/                  ← React frontend
+│   ├── src/
+│   │   ├── App.jsx           ← Router setup
+│   │   ├── components/
+│   │   │   ├── Home.jsx      ← Landing page
+│   │   │   ├── Navbar.jsx    ← Navigation bar
+│   │   │   ├── Explore.jsx   ← Explore section
+│   │   │   ├── Booking.jsx   ← Table booking
+│   │   │   ├── Hero.jsx      ← Hero section
+│   │   │   ├── Side.jsx      ← Side section
+│   │   │   ├── Form.jsx      ← Contact form
+│   │   │   ├── Footer.jsx    ← Footer
+│   │   │   ├── Menu/
+│   │   │   │   ├── Menu.jsx  ← Menu page + filters
+│   │   │   │   ├── Card.jsx  ← Food card component
+│   │   │   │   ├── Card2.jsx ← Cart page
+│   │   │   │   ├── OrderForm.jsx ← Checkout
+│   │   │   │   └── item.js   ← Menu items data
+│   │   │   ├── Login/
+│   │   │   │   └── Login.jsx ← Auth page
+│   │   │   ├── Admin/
+│   │   │   │   └── AdminPanel.jsx ← Admin dashboard
+│   │   │   └── About/
+│   │   │       ├── About.jsx
+│   │   │       ├── Details.jsx
+│   │   │       └── Team.jsx
+│   │   ├── redux/
+│   │   │   ├── store.js      ← Redux store
+│   │   │   └── CreateSlice.js ← Cart slice
+│   │   └── context/
+│   │       └── Contaxt.jsx   ← Contact page
+│   └── vite.config.js
+```
+
+---
+
+## 🚀 How to Run
+
+```bash
+cd foodapp-main
+npm install          # Install concurrently
+npm run dev          # Starts both frontend (5173) + backend (5000)
+```
+
+> [!IMPORTANT]
+> MongoDB must be running locally on `mongodb://127.0.0.1:27017/foodapp` for orders, users, and food CRUD to work.
+
+---
+
+## 🔑 Default Credentials
+
+| Role | Username | Password |
+|------|----------|----------|
+| **Admin** | `admin` | `admin123` |
+| **User** | Register via `/login` page | — |
