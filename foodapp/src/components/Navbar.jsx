@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import './Navbar.css'
 import { LuShoppingBag, LuUser, LuLogIn, LuLogOut } from "react-icons/lu"
 import { useSelector } from 'react-redux'
+import logoImg from '../assets/logo.jpg'
 
 const Navbar = () => {
   const cartItems = useSelector((state) => state.app)
@@ -12,6 +13,7 @@ const Navbar = () => {
   const [hidden, setHidden] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [currentUser, setCurrentUser] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
@@ -26,11 +28,18 @@ const Navbar = () => {
       } else {
         setCurrentUser(null)
       }
+
+      const adminToken = localStorage.getItem('adminToken')
+      setIsAdmin(!!adminToken)
     }
 
     checkUser()
     window.addEventListener('authChange', checkUser)
-    return () => window.removeEventListener('authChange', checkUser)
+    window.addEventListener('storage', checkUser)
+    return () => {
+      window.removeEventListener('authChange', checkUser)
+      window.removeEventListener('storage', checkUser)
+    }
   }, [])
 
   const handleLogout = () => {
@@ -51,16 +60,17 @@ const Navbar = () => {
   }, [lastScrollY])
 
 
-  // Close menu on route change
   useEffect(() => { setMenuOpen(false) }, [location])
 
-  const navLinks = [
+  const baseNavLinks = [
     { to: '/', label: 'Home' },
     { to: '/about', label: 'About' },
+    { to: '/category', label: 'Category' },
     { to: '/menu', label: 'Menu' },
     { to: '/contact', label: 'Contact' },
-    { to: '/admin', label: 'Admin Panel' },
   ]
+
+  const navLinks = baseNavLinks;
 
   return (
     <motion.nav
@@ -70,14 +80,15 @@ const Navbar = () => {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className='nav-inner'>
-        {/* Brand */}
         <Link to="/" className='nav-title'>
-          <span className='nav-title-chef'>The Chef</span>
-          <span className='nav-title-sep'>&amp;</span>
-          <span className='nav-title-table'>The Table</span>
+          <img src={logoImg} alt="Logo" className="nav-logo-img" />
+          <div className="nav-title-text">
+            <span className='nav-title-chef'>The Chef</span>
+            <span className='nav-title-sep'>&amp;</span>
+            <span className='nav-title-table'>The Table</span>
+          </div>
         </Link>
 
-        {/* Desktop links */}
         <div className='nav-links'>
           {navLinks.map(({ to, label }) => {
             const isActive = location.pathname === to
@@ -100,7 +111,6 @@ const Navbar = () => {
           })}
         </div>
 
-        {/* Right — cart + user auth + hamburger */}
         <div className='nav-right'>
           {currentUser ? (
             <div className="user-auth-section">
@@ -152,7 +162,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile drawer */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div

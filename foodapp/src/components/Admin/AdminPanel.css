@@ -220,12 +220,13 @@
 
 /* --- Admin Dashboard Layout --- */
 .admin-dashboard-wrapper {
-  min-height: 100vh;
+  height: 100vh;
   background: #0f1117;
   color: #e2e8f0;
   font-family: inherit;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Header */
@@ -314,7 +315,8 @@
   gap: 0.5rem;
   width: 260px;
   min-width: 260px;
-  min-height: calc(100vh - 80px);
+  height: 100%;
+  overflow-y: auto;
 }
 
 .sidebar-bottom-actions {
@@ -368,6 +370,7 @@
 .admin-main-container {
   display: flex;
   flex: 1;
+  overflow: hidden;
 }
 
 .admin-tab-content {

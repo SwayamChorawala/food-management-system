@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useSearchParams } from 'react-router-dom'
 import Navbar from '../Navbar'
 import './Menu.css'
 import Card from './Card'
 import { menuItems } from './item'
 import { FaSearch } from "react-icons/fa"
+import { LuLeafyGreen } from "react-icons/lu"
+import { GiChickenOven } from "react-icons/gi"
 
 const containerVariants = {
   hidden: {},
@@ -18,9 +21,28 @@ const cardVariant = {
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Menu = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialType = searchParams.get('type') || 'all';
+
   const [name, setname] = useState("")
+  const [selectedType, setSelectedType] = useState(initialType);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedSubCategory, setSelectedSubCategory] = useState("All");
+
+  useEffect(() => {
+    const typeInUrl = searchParams.get('type') || 'all';
+    setSelectedType(typeInUrl);
+  }, [searchParams]);
+
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+    if (type === 'all') {
+      searchParams.delete('type');
+      setSearchParams(searchParams);
+    } else {
+      setSearchParams({ ...Object.fromEntries(searchParams), type });
+    }
+  };
 
   // Build menu list from item.js + admin edits + admin-added extras
   const buildMenuList = () => {
@@ -68,6 +90,13 @@ const Menu = () => {
 
   useEffect(() => {
     let result = menuItemsList;
+
+    if (selectedType === "veg") {
+      result = result.filter(item => item.type === "veg");
+    } else if (selectedType === "non-veg") {
+      result = result.filter(item => item.type === "non-veg");
+    }
+
     if (name) {
       result = result.filter((item) =>
         item.title.toLowerCase().includes(name.toLowerCase())
@@ -80,7 +109,7 @@ const Menu = () => {
       result = result.filter(item => item.subCategory === selectedSubCategory);
     }
     setFilteredItems(result);
-  }, [name, selectedCategory, selectedSubCategory, menuItemsList]);
+  }, [name, selectedType, selectedCategory, selectedSubCategory, menuItemsList]);
 
   return (
     <motion.div
@@ -96,7 +125,7 @@ const Menu = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            Dinner Menu
+            {selectedType === 'veg' ? 'Vegetarian Menu 🌱' : selectedType === 'non-veg' ? 'Non-Vegetarian Menu 🍖' : 'Dinner Menu'}
           </motion.h1>
         </div>
 
@@ -127,6 +156,28 @@ const Menu = () => {
           </div>
 
           <div className="filter-container">
+            {/* TYPE FILTERS (VEG / NON-VEG / ALL) */}
+            <div className="type-filters">
+              <button
+                className={`type-filter-btn ${selectedType === 'all' ? 'active' : ''}`}
+                onClick={() => handleTypeChange('all')}
+              >
+                All Menu
+              </button>
+              <button
+                className={`type-filter-btn type-veg ${selectedType === 'veg' ? 'active' : ''}`}
+                onClick={() => handleTypeChange('veg')}
+              >
+                <LuLeafyGreen /> Pure Veg
+              </button>
+              <button
+                className={`type-filter-btn type-nonveg ${selectedType === 'non-veg' ? 'active' : ''}`}
+                onClick={() => handleTypeChange('non-veg')}
+              >
+                <GiChickenOven /> Non-Veg
+              </button>
+            </div>
+
             <div className="category-filters">
               {categories.map((cat, idx) => (
                 <button
@@ -161,11 +212,17 @@ const Menu = () => {
           initial="hidden"
           animate="visible"
         >
-          {filteredItems.map((item) => (
-            <motion.div key={item.id} variants={cardVariant}>
-              <Card item={item} />
-            </motion.div>
-          ))}
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item) => (
+              <motion.div key={item.id} variants={cardVariant}>
+                <Card item={item} />
+              </motion.div>
+            ))
+          ) : (
+            <div className="no-items-found">
+              <p>No {selectedType !== 'all' ? selectedType : ''} items found matching your filter criteria.</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </motion.div>

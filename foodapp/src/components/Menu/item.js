@@ -1,21 +1,38 @@
-import image1 from '../../assets/image1.avif';
-import image2 from '../../assets/image2.avif';
-import image3 from '../../assets/image3.avif';
-import image4 from '../../assets/image4.avif';
-import image5 from '../../assets/image5.avif';
-import image6 from '../../assets/image6.avif';
-import image7 from '../../assets/image7.avif';
-import image8 from '../../assets/image8.avif';
-import image9 from '../../assets/image9.avif';
-const image10 = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop";
-const image11 = "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=800&auto=format&fit=crop";
-const image12 = "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=800&auto=format&fit=crop";
-const image13 = "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=800&auto=format&fit=crop";
-const image14 = "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=800&auto=format&fit=crop";
-const image15 = "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop";
-const image16 = "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=800&auto=format&fit=crop";
-const image17 = "https://images.unsplash.com/photo-1546173159-315724a31696?q=80&w=800&auto=format&fit=crop";
-const image18 = "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop";
+const image1 = "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop"; // Bread & Dips
+
+const image2 = "https://d1mxd7n691o8sz.cloudfront.net/static/recipe/recipe/2023-12/Vegetable-Spring-Rolls-2-1-906001560ca545c8bc72baf473f230b4.jpg";
+
+const image3 = "https://images.unsplash.com/photo-1546793665-c74683f339c1?q=80&w=800&auto=format&fit=crop"; // Grilled Chicken Salad
+
+const image4 = "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=800&auto=format&fit=crop"; // Margherita Pizza
+
+const image5 = "https://images.unsplash.com/photo-1579751626657-72bc17010498?q=80&w=800&auto=format&fit=crop"; // Chicken Pepperoni Pizza
+
+const image6 = "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop"; // Arrabbiata Pasta
+
+const image7 = "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop"; // Chicken Biryani
+
+const image8 = "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop"; // Pasta Carbonara
+
+const image9 = "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop"; // Chocolate Lava Cake
+
+const image10 = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop"; // Veg Burger
+
+const image11 = "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=800&auto=format&fit=crop"; // Chicken Burger
+
+const image12 = "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop"; // Veg Momos
+
+const image13 = "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=800&auto=format&fit=crop"; // Paneer Tikka
+
+const image14 = "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=800&auto=format&fit=crop"; // Chicken Tikka
+
+const image15 = "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop"; // Chocolate Brownie
+
+const image16 = "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=800&auto=format&fit=crop"; // Cheesecake
+
+const image17 = "https://images.unsplash.com/photo-1546173159-315724a31696?q=80&w=800&auto=format&fit=crop"; // Fresh Lime Soda
+
+const image18 = "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop"; // Cold Coffee
 
 export const menuItems = [
     { id: 1, image: image1, title: "Bread & Dips", desc: "Sourdough bread accompanied by hummus, beetroot & whipped feta dips", price: 600, type: "veg", quantity:1, category: "Starters", subCategory: "Bread" },
@@ -126,4 +143,4 @@ export const menuItems = [
         subCategory: "Coffee",
         quantity: 1
     }
-];
+];   

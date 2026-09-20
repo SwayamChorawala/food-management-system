@@ -14,7 +14,6 @@ const fadeRight = {
 const Explore = () => {
   return (
     <div className='explore'>
-      {/* Aurora orbs */}
       <div className='explore-orb explore-orb-1' />
       <div className='explore-orb explore-orb-2' />
 

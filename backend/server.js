@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/foodapp';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/foodapp1';
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +19,6 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Backend is running' });
 });
 
-// Admin Login Endpoint
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -49,27 +48,13 @@ app.post('/api/admin/login', async (req, res) => {
   }
 });
 
-// ==================== FOOD ITEMS CRUD ====================
-
-// GET all food items (Seeds defaults if database is empty)
 app.get('/api/food', async (req, res) => {
   try {
     let items = await FoodItem.find().sort({ createdAt: -1 });
 
-    // Seed default items if DB is empty
     if (items.length === 0) {
-      const defaultItems = [
-        { title: 'Bread & Dips', desc: 'Sourdough bread accompanied by hummus, beetroot & whipped feta dips', price: 600, type: 'veg', image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Crispy Spring Rolls', desc: 'Hand-rolled crispy skins filled with fresh vegetables and sweet chili sauce', price: 450, type: 'veg', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Grilled Chicken Salad', desc: 'Fresh greens, avocado, cherry tomatoes, and tender grilled chicken breast', price: 850, type: 'non-veg', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Margherita Pizza', desc: 'Classic Italian pizza base topped with fresh mozzarella, tomatoes and basil', price: 900, type: 'veg', image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Spicy Beef Tacos', desc: 'Three soft shell tacos filled with slow-cooked pulled beef and spicy salsa', price: 750, type: 'non-veg', image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Signature Sushi Platter', desc: 'Premium assortment of fresh sashimi, nigiri, and maki rolls with soy sauce', price: 1200, type: 'non-veg', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Classic Cheeseburger', desc: 'Juicy beef patty with caramelized onions, cheddar cheese, and rustic fries', price: 800, type: 'non-veg', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Creamy Pasta Carbonara', desc: 'Traditional Italian pasta with pancetta, egg yolk, and aged parmesan cheese', price: 750, type: 'non-veg', image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=600&auto=format&fit=crop&q=80' },
-        { title: 'Chocolate Lava Cake', desc: 'Warm molten chocolate center served with premium vanilla bean ice cream', price: 500, type: 'veg', image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80' },
-      ];
-      items = await FoodItem.insertMany(defaultItems);
+      // Data is expected to be populated via seed.js now
+      console.log('No food items found. Please run "node seed.js" to populate database.');
     }
 
     res.status(200).json(items);
@@ -79,7 +64,6 @@ app.get('/api/food', async (req, res) => {
   }
 });
 
-// CREATE food item
 app.post('/api/food', async (req, res) => {
   try {
     const { title, desc, price, type, image, category } = req.body;
@@ -104,7 +88,6 @@ app.post('/api/food', async (req, res) => {
   }
 });
 
-// UPDATE food item
 app.put('/api/food/:id', async (req, res) => {
   try {
     const { title, desc, price, type, image, category } = req.body;
@@ -125,7 +108,6 @@ app.put('/api/food/:id', async (req, res) => {
   }
 });
 
-// DELETE food item
 app.delete('/api/food/:id', async (req, res) => {
   try {
     const deleted = await FoodItem.findByIdAndDelete(req.params.id);
@@ -138,8 +120,6 @@ app.delete('/api/food/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to delete food item', error: error.message });
   }
 });
-
-// ==================== ORDERS CRUD ====================
 
 app.post('/api/orders', async (req, res) => {
   try {
@@ -200,7 +180,6 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-// UPDATE order details / status
 app.put('/api/orders/:id', async (req, res) => {
   try {
     const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -214,7 +193,6 @@ app.put('/api/orders/:id', async (req, res) => {
   }
 });
 
-// DELETE order
 app.delete('/api/orders/:id', async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);
@@ -228,9 +206,6 @@ app.delete('/api/orders/:id', async (req, res) => {
   }
 });
 
-// ==================== USER MANAGEMENT ====================
-
-// User Registration Endpoint
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -267,7 +242,6 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// User Login Endpoint
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -300,7 +274,6 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Get all registered users
 app.get('/api/users', async (req, res) => {
   try {
     const users = await User.find({}, '-password').sort({ createdAt: -1 });
@@ -311,7 +284,6 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// Delete a user
 app.delete('/api/users/:id', async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);

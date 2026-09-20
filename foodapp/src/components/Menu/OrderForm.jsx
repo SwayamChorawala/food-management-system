@@ -51,7 +51,7 @@ const OrderForm = () => {
 
   const subtotal = items.reduce((total, item) => total + item.price * (item.quantity || 1), 0);
   const deliveryFee = subtotal > 0 ? 20 : 0;
-  const taxes = subtotal * 0.05; // 5% tax
+  const taxes = subtotal * 0.05;
   const total = subtotal + deliveryFee + taxes;
 
   const handleChange = (e) => {
@@ -144,7 +144,6 @@ const OrderForm = () => {
     }
   };
 
-  // ── Unauthenticated User Guard Screen ────────────────────────────────────
   if (!currentUser) {
     return (
       <div className="orderform-page-wrapper">
@@ -195,7 +194,6 @@ const OrderForm = () => {
     );
   }
 
-  // ── Order Success Screen ───────────────────────────────────────────────────
   if (orderId) {
     return (
       <div className="orderform-page-wrapper">

@@ -20,7 +20,6 @@ const Login = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Check if user is already logged in -> auto-redirect
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -58,7 +57,6 @@ const Login = () => {
         throw new Error(data.message || 'Authentication failed');
       }
 
-      // Store user session data
       const userData = data.user || { username: username.trim(), email: email.trim() };
       localStorage.setItem('user', JSON.stringify(userData));
       window.dispatchEvent(new Event('authChange'));
@@ -71,7 +69,6 @@ const Login = () => {
     } catch (err) {
       console.warn('Backend API error or server offline:', err.message);
       
-      // Fallback mechanism: if server connection fails or endpoint errors during local dev
       if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
         const fallbackUser = {
           username: username.trim(),
@@ -118,7 +115,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Tab Switcher */}
         <div className="login-tabs">
           <button
             type="button"
@@ -144,7 +140,6 @@ const Login = () => {
           </button>
         </div>
 
-        {/* Feedback Messages */}
         {errorMsg && (
           <div className="alert-message alert-error">
             <LuInfo />
@@ -160,7 +155,6 @@ const Login = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Username */}
           <div className="form-group">
             <label className="form-label">Username</label>
             <div className="input-wrapper">
@@ -176,7 +170,6 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Email (Only on Register) */}
           {!isLoginTab && (
             <div className="form-group">
               <label className="form-label">Email Address (Optional)</label>
@@ -193,7 +186,6 @@ const Login = () => {
             </div>
           )}
 
-          {/* Password */}
           <div className="form-group">
             <label className="form-label">Password</label>
             <div className="input-wrapper">

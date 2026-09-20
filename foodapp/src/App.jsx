@@ -7,6 +7,7 @@ import Menu from './components/Menu/Menu'
 
 import Explore from './components/Explore';
 import About from './components/About/About';
+import Category from './components/Category/Category';
 import { LuALargeSmall, LuShoppingBag } from 'react-icons/lu';
 import Card2 from './components/Menu/Card2';
 import Contaxt from './context/Contaxt';
@@ -31,6 +32,10 @@ function App() {
     {
       path: '/about',
       element: <About/>
+    },
+    {
+      path: '/category',
+      element: <Category />
     },
     {
        path: '/menu',

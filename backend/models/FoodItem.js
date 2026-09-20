@@ -25,8 +25,13 @@ const foodItemSchema = new mongoose.Schema(
       default: '',
     },
     category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
+    subCategory: {
       type: String,
-      default: 'Main Course',
+      default: '',
     },
   },
   { timestamps: true }

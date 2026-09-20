@@ -31,30 +31,25 @@ const INITIAL_FOOD_ITEMS = menuItems;
 const AdminPanel = () => {
   const navigate = useNavigate();
 
-  // Auth state
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Active dashboard tab: 'dashboard', 'food', 'orders', 'users'
   const [activeTab, setActiveTab] = useState('dashboard');
 
-  // Data states
   const [foodItems, setFoodItems] = useState([]);
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Notification message
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
-  // Modal State for Food Item (Create / Edit)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [originalImage, setOriginalImage] = useState(null); // stores imported avif/module images
+  const [originalImage, setOriginalImage] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     desc: '',
@@ -64,7 +59,6 @@ const AdminPanel = () => {
     category: 'Mains',
   });
 
-  // Check login session on mount
   useEffect(() => {
     const savedAdmin = localStorage.getItem('adminToken');
     if (savedAdmin) {
@@ -80,7 +74,6 @@ const AdminPanel = () => {
     }, 3500);
   };
 
-  // Handle Admin Login
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setAuthError('');
@@ -108,6 +101,7 @@ const AdminPanel = () => {
         localStorage.setItem('adminToken', data.admin?.token || 'admin-active');
         localStorage.setItem('adminUser', adminUsername.trim());
         setIsAdminLoggedIn(true);
+        window.dispatchEvent(new Event('authChange'));
         triggerNotification('Welcome Admin! Login successful.');
         fetchDashboardData();
       } else {
@@ -116,6 +110,7 @@ const AdminPanel = () => {
           localStorage.setItem('adminToken', 'admin-active-fallback');
           localStorage.setItem('adminUser', 'admin');
           setIsAdminLoggedIn(true);
+          window.dispatchEvent(new Event('authChange'));
           triggerNotification('Welcome Admin! (Logged in successfully)');
           fetchDashboardData();
         } else {
@@ -128,6 +123,7 @@ const AdminPanel = () => {
         localStorage.setItem('adminToken', 'admin-active-fallback');
         localStorage.setItem('adminUser', 'admin');
         setIsAdminLoggedIn(true);
+        window.dispatchEvent(new Event('authChange'));
         triggerNotification('Welcome Admin! (Logged in in Offline Mode)');
         fetchDashboardData();
       } else {
@@ -138,36 +134,32 @@ const AdminPanel = () => {
     }
   };
 
-  // Handle Admin Logout
   const handleAdminLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
     setIsAdminLoggedIn(false);
     setAdminUsername('');
     setAdminPassword('');
+    window.dispatchEvent(new Event('authChange'));
     triggerNotification('Admin logged out safely', 'info');
   };
 
-  // ─── Helper: Get edits map from localStorage ───────────────────────────────
   const getEditsMap = () => {
     try {
       return JSON.parse(localStorage.getItem('adminFoodEdits') || '{}');
     } catch { return {}; }
   };
 
-  // ─── Helper: Save edits map to localStorage ────────────────────────────────
   const saveEditsMap = (map) => {
     localStorage.setItem('adminFoodEdits', JSON.stringify(map));
   };
 
-  // ─── Helper: Get extra items (admin-added, not in item.js) ─────────────────
   const getExtraItems = () => {
     try {
       return JSON.parse(localStorage.getItem('adminFoodExtras') || '[]');
     } catch { return []; }
   };
 
-  // ─── Build the live display list from item.js + edits + extras ───────────
   const buildFoodList = () => {
     const editsMap = getEditsMap();
     const extras = getExtraItems();
@@ -178,7 +170,6 @@ const AdminPanel = () => {
     return [...base, ...extras];
   };
 
-  // ─── Sync display list and fire menuUpdated event ─────────────────────────
   const syncFoodDisplay = () => {
     const list = buildFoodList();
     setFoodItems(list);
@@ -205,7 +196,6 @@ const AdminPanel = () => {
     window.dispatchEvent(new Event('menuUpdated'));
   };
 
-  // ─── Load all dashboard data ───────────────────────────────────────────────
   const fetchDashboardData = async () => {
     setLoadingData(true);
     syncFoodDisplay();
@@ -225,7 +215,21 @@ const AdminPanel = () => {
     setLoadingData(false);
   };
 
-  // ─── Open Edit / Create Modal ──────────────────────────────────────────────
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        alert("Image size should be less than 2MB to save in local storage.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const openFoodModal = (item = null) => {
     if (item) {
       setEditingItem(item);
@@ -249,7 +253,6 @@ const AdminPanel = () => {
 
   const closeFoodModal = () => { setIsModalOpen(false); setEditingItem(null); };
 
-  // ─── Save Food Item (Edit or Create) ──────────────────────────────────────
   const handleSaveFoodItem = (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.price) {
@@ -313,7 +316,6 @@ const AdminPanel = () => {
     closeFoodModal();
   };
 
-  // ─── Delete Food Item ──────────────────────────────────────────────────────
   const handleDeleteFoodItem = (id) => {
     if (!window.confirm('Kya aap is food item ko delete karna chahte hain?')) return;
     const isBaseItem = menuItems.some((m) => m.id === id);
@@ -332,7 +334,6 @@ const AdminPanel = () => {
     syncFoodDisplay();
   };
 
-  // UPDATE Order Status
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
@@ -350,7 +351,6 @@ const AdminPanel = () => {
     triggerNotification(`Order status updated to: ${newStatus}`);
   };
 
-  // DELETE Order
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm('Are you sure you want to delete this order record?')) return;
 
@@ -364,7 +364,6 @@ const AdminPanel = () => {
     triggerNotification('Order record deleted', 'info');
   };
 
-  // DELETE User
   const handleDeleteUser = async (userId) => {
     if (!window.confirm('Are you sure you want to remove this registered user?')) return;
 
@@ -464,7 +463,6 @@ const AdminPanel = () => {
   // Admin Dashboard View (When Logged In)
   return (
     <div className="admin-dashboard-wrapper">
-      {/* Toast Notification */}
       <AnimatePresence>
         {notification.show && (
           <motion.div
@@ -479,7 +477,6 @@ const AdminPanel = () => {
         )}
       </AnimatePresence>
 
-      {/* Top Header Bar */}
       <header className="admin-header">
         <div className="admin-header-brand">
           <LuShieldCheck className="brand-icon" />
@@ -490,9 +487,7 @@ const AdminPanel = () => {
         </div>
       </header>
 
-      {/* Main Container */}
       <main className="admin-main-container">
-        {/* Navigation Tabs */}
         <div className="admin-tabs-bar">
           <button
             className={`tab-item ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -544,7 +539,6 @@ const AdminPanel = () => {
           </div>
         </div>
 
-        {/* TAB 0: DASHBOARD */}
         {activeTab === 'dashboard' && (
           <div className="admin-tab-content">
             <div className="tab-actions-header">
@@ -605,7 +599,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* TAB 1: FOOD MENU MANAGEMENT (CRUD) */}
         {activeTab === 'food' && (
           <div className="admin-tab-content">
             <div className="tab-actions-header">
@@ -629,7 +622,6 @@ const AdminPanel = () => {
               </div>
             </div>
 
-            {/* Food Items Grid */}
             <div className="food-grid">
               {filteredFoodItems.map((item) => {
                 const isBaseItem = menuItems.some((m) => m.id === item.id);
@@ -680,7 +672,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* TAB 2: ORDERS MANAGEMENT */}
         {activeTab === 'orders' && (
           <div className="admin-tab-content">
             <div className="tab-actions-header">
@@ -769,7 +760,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* TAB 3: REGISTERED USERS MANAGEMENT */}
         {activeTab === 'users' && (
           <div className="admin-tab-content">
             <div className="tab-actions-header">
@@ -823,7 +813,6 @@ const AdminPanel = () => {
         )}
       </main>
 
-      {/* CREATE / EDIT FOOD ITEM MODAL */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="modal-backdrop">
@@ -887,8 +876,7 @@ const AdminPanel = () => {
                 </div>
 
                 <div className="admin-form-group">
-                  <label>Image URL / Path</label>
-                  {/* Show current image preview */}
+                  <label>Image Source</label>
                   {(originalImage || formData.image) && (
                     <div className="modal-img-preview">
                       <img
@@ -899,14 +887,33 @@ const AdminPanel = () => {
                       <span className="img-preview-label">Current Image</span>
                     </div>
                   )}
-                  <input
-                    type="text"
-                    placeholder="New image URL (leave blank to keep current image)"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  />
+                  
+                  <div className="image-upload-options" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <div className="file-upload-box" style={{ background: 'rgba(255,255,255,0.05)', padding: '0.8rem', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.2)' }}>
+                      <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                        <LuPlus style={{ fontSize: '1.2rem', color: '#ff5252' }}/>
+                        <span>Upload Image File (Max 2MB)</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+                    </div>
+                    
+                    <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#64748b' }}>OR</div>
+                    
+                    <input
+                      type="text"
+                      placeholder="Paste Image URL here"
+                      value={formData.image && formData.image.startsWith('data:image') ? '' : formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    />
+                  </div>
+
                   {editingItem && originalImage && (
-                    <p className="img-hint">💡 Image field khaali chhodein toh purani image rakhegi</p>
+                    <p className="img-hint" style={{ marginTop: '0.75rem' }}>💡 Leave blank to keep the current image</p>
                   )}
                 </div>
 

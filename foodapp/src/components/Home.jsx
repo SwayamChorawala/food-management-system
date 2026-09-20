@@ -14,7 +14,6 @@ const Home = () => {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 })
 
-  // Mouse parallax
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
   const imgX = useTransform(mouseX, [-1, 1], [-18, 18])
@@ -29,7 +28,6 @@ const Home = () => {
     mouseY.set(((e.clientY - rect.top) / rect.height - 0.5) * 2)
   }
 
-  // Text animation variants
   const titleVariants = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.04 } }
@@ -43,12 +41,10 @@ const Home = () => {
 
   return (
     <div className='home-page'>
-      {/* Scroll progress bar */}
       <motion.div className='scroll-progress' style={{ scaleX }} />
 
       <Navbar />
 
-      {/* ── HERO PHOTO SECTION ── */}
       <motion.section
         className='photo'
         ref={heroRef}
@@ -63,7 +59,6 @@ const Home = () => {
           className='hero-image'
           style={{ x: imgX, y: imgY, scale: 1.25 }}
         />
-        {/* Overlay */}
         <div className='hero-overlay'>
           <motion.div
             className='hero-eyebrow'
@@ -119,7 +114,6 @@ const Home = () => {
             <span className='btn-glow' />
           </motion.button>
 
-          {/* Scroll indicator */}
           <motion.div
             className='scroll-indicator'
             initial={{ opacity: 0 }}
@@ -131,12 +125,10 @@ const Home = () => {
           </motion.div>
         </div>
 
-        {/* Floating decorative orbs */}
         <div className='hero-orb hero-orb-1' />
         <div className='hero-orb hero-orb-2' />
       </motion.section>
 
-      {/* ── OTHER SECTIONS ── */}
       <section id='explore-section'>
         <Explore />
       </section>
