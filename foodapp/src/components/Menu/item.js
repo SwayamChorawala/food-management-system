@@ -12,7 +12,7 @@ const image6 = "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=8
 
 const image7 = "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop"; // Chicken Biryani
 
-const image8 = "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop"; // Pasta Carbonara
+const image8 = "https://www.allrecipes.com/thmb/S96E8sSx7Znjgaj305jrzCfImdc=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/11770-pasta-carbonara-i-VAT-Beauty-4x3-c0eda2d4ee04407a968b825395df2cb4.jpg"; // Pasta Carbonara
 
 const image9 = "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop"; // Chocolate Lava Cake
 

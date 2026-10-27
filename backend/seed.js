@@ -5,8 +5,7 @@ const Category = require('./models/Category');
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/foodapp1';
-
+const MONGO_URI = process.env.MONGO_URI;
 const itemsData = [
   { title: "Bread & Dips", desc: "Sourdough bread accompanied by hummus, beetroot & whipped feta dips", price: 600, type: "veg", image: "image1.avif", category: "Starters", subCategory: "Bread" },
   { title: "Crispy Spring Rolls", desc: "Hand-rolled crispy skins filled with fresh vegetables and sweet chili sauce", price: 450, type: "veg", image: "image2.avif", category: "Starters", subCategory: "Chinese" },

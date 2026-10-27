@@ -66,7 +66,7 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            ✦ Fine Dining Experience
+       
           </motion.div>
 
           <motion.h1

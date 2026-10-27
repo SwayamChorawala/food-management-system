@@ -57,6 +57,7 @@ const AdminPanel = () => {
     type: 'veg',
     image: '',
     category: 'Mains',
+    subCategory: '',
   });
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const AdminPanel = () => {
     const extras = getExtraItems();
     const base = menuItems.map((item) => {
       const edit = editsMap[item.id];
-      return edit ? { ...item, ...edit, image: item.image } : item; // image always from item.js
+      return edit ? { ...item, ...edit, image: edit.imageOverride || item.image } : item;
     });
     return [...base, ...extras];
   };
@@ -180,7 +181,7 @@ const AdminPanel = () => {
       ...menuItems.map((item) => {
         const edit = editsMap[item.id];
         return edit
-          ? { ...item, ...edit, image: item.image } // image stays as module reference for Menu
+          ? { ...item, ...edit, image: edit.imageOverride || item.image }
           : item;
       }),
       ...extras,
@@ -234,19 +235,20 @@ const AdminPanel = () => {
     if (item) {
       setEditingItem(item);
       setOriginalImage(item.image); // preserve original item.js module image
-      const isUrlString = item.image && typeof item.image === 'string' && item.image.startsWith('http');
+      const isUrlString = item.image && typeof item.image === 'string' && (item.image.startsWith('http') || item.image.startsWith('data:'));
       setFormData({
         title: item.title || '',
         desc: item.desc || '',
         price: item.price || '',
         type: item.type || 'veg',
-        image: isUrlString ? item.image : '', // only pre-fill if it's an http URL
+        image: isUrlString ? item.image : '', // only pre-fill if it's an http URL or data URL
         category: item.category || 'Mains',
+        subCategory: item.subCategory || '',
       });
     } else {
       setEditingItem(null);
       setOriginalImage(null);
-      setFormData({ title: '', desc: '', price: '', type: 'veg', image: '', category: 'Mains' });
+      setFormData({ title: '', desc: '', price: '', type: 'veg', image: '', category: 'Mains', subCategory: '' });
     }
     setIsModalOpen(true);
   };
@@ -272,7 +274,8 @@ const AdminPanel = () => {
           desc: formData.desc.trim(),
           price: Number(formData.price),
           type: formData.type,
-          category: formData.category,
+          category: formData.category.trim(),
+          subCategory: formData.subCategory.trim(),
           // image: only save a new URL if user typed one; otherwise keep item.js image
           ...(formData.image.trim() !== '' ? { imageOverride: formData.image.trim() } : {}),
         };
@@ -287,7 +290,8 @@ const AdminPanel = () => {
               desc: formData.desc.trim(),
               price: Number(formData.price),
               type: formData.type,
-              category: formData.category,
+              category: formData.category.trim(),
+              subCategory: formData.subCategory.trim(),
               image: formData.image.trim() || ex.image || originalImage || '',
             }
             : ex
@@ -304,7 +308,8 @@ const AdminPanel = () => {
         desc: formData.desc.trim(),
         price: Number(formData.price),
         type: formData.type,
-        category: formData.category,
+        category: formData.category.trim(),
+        subCategory: formData.subCategory.trim(),
         image: formData.image.trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=80',
       };
       extras.push(newItem);
@@ -854,7 +859,7 @@ const AdminPanel = () => {
                   </div>
 
                   <div className="admin-form-group">
-                    <label>Food Type</label>
+                    <label>Category</label>
                     <select
                       value={formData.type}
                       onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -862,6 +867,28 @@ const AdminPanel = () => {
                       <option value="veg">Veg</option>
                       <option value="non-veg">Non-Veg</option>
                     </select>
+                  </div>
+                </div>
+
+                <div className="admin-form-row">
+                  <div className="admin-form-group">
+                    <label>Sub Category *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Starters"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="admin-form-group">
+                    <label>Inner Category / Cuisine</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Chinese"
+                      value={formData.subCategory}
+                      onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                    />
                   </div>
                 </div>
 
