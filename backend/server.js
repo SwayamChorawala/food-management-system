@@ -299,14 +299,23 @@ app.delete('/api/users/:id', async (req, res) => {
 
 const startServer = async () => {
   try {
+    if (!MONGO_URI) {
+      console.error('CRITICAL ERROR: MONGO_URI environment variable is missing!');
+      console.error('Please configure MONGO_URI in your Render service environment variables.');
+      process.exit(1);
+    }
+
+    console.log('Connecting to MongoDB Atlas...');
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
 
-    app.listen(PORT, () => {
-      console.log(`Backend server running on http://localhost:${PORT}`);
+    const host = '0.0.0.0';
+    app.listen(PORT, host, () => {
+      console.log(`Backend server running on port ${PORT}`);
     });
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
+    console.error('Hint: Make sure 0.0.0.0/0 is allowed in MongoDB Atlas -> Network Access.');
     process.exit(1);
   }
 };
