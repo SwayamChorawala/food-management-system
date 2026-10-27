@@ -298,25 +298,25 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 const startServer = async () => {
+  const host = '0.0.0.0';
+  app.listen(PORT, host, () => {
+    console.log(`Backend server running on port ${PORT}`);
+  });
+
+  if (!MONGO_URI) {
+    console.error('CRITICAL ERROR: MONGO_URI environment variable is missing in Render settings!');
+    return;
+  }
+
+  console.log('Connecting to MongoDB Atlas...');
   try {
-    if (!MONGO_URI) {
-      console.error('CRITICAL ERROR: MONGO_URI environment variable is missing!');
-      console.error('Please configure MONGO_URI in your Render service environment variables.');
-      process.exit(1);
-    }
-
-    console.log('Connecting to MongoDB Atlas...');
-    await mongoose.connect(MONGO_URI);
-    console.log('MongoDB connected successfully');
-
-    const host = '0.0.0.0';
-    app.listen(PORT, host, () => {
-      console.log(`Backend server running on port ${PORT}`);
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 10000, // 10s timeout instead of 30s
     });
+    console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
-    console.error('Hint: Make sure 0.0.0.0/0 is allowed in MongoDB Atlas -> Network Access.');
-    process.exit(1);
+    console.error('IMPORTANT: Please make sure 0.0.0.0/0 is added in MongoDB Atlas -> Network Access!');
   }
 };
 
